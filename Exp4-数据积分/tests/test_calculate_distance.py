@@ -1,13 +1,12 @@
-# 导入 numpy 库，用于高效的数值计算和数组操作
 import numpy as np
-# 导入 matplotlib 库的 pyplot 模块，用于绘制各种类型的图表
 import matplotlib.pyplot as plt
-# 从 scipy 库的 integrate 模块导入 cumulative_trapezoid 函数，用于计算累积梯形积分
 from scipy.integrate import cumulative_trapezoid
+import pytest
+
 
 def main():
-    # 读取数据：使用 numpy 的 loadtxt 函数从 'velocities.txt' 文件中读取数据
-    data = np.loadtxt('C:\\Users\\32874\\Desktop\\新建 文本文档 (2).txt')
+    # 读取数据：使用 numpy 的 loadtxt 函数从'velocities.txt' 文件中读取数据
+    data = np.loadtxt(r'C:\Users\32874\Desktop\新建 文本文档 (2).txt')
     # 提取时间数据：从 data 数组中选取所有行的第 0 列，赋值给变量 t 作为时间数据
     t = data[:, 0]
     # 提取速度数据：从 data 数组中选取所有行的第 1 列，赋值给变量 v 作为速度数据
@@ -38,6 +37,26 @@ def main():
     # 显示图表：显示绘制好的图表
     plt.show()
 
-# 确保只有当该脚本作为主程序直接运行时，才会调用 main 函数
+
+# 测试 main 函数能正常运行（简单示例，可根据实际需求完善）
+def test_main_function_runs():
+    # 模拟数据文件存在（实际应根据需求完善测试逻辑）
+    mock_data = np.array([[1, 2], [2, 3]])
+    np.savetxt('mock_velocities.txt', mock_data)
+    try:
+        main()
+    except Exception as e:
+        pytest.fail(f"main 函数执行时出错: {e}")
+    finally:
+        import os
+        if os.path.exists('mock_velocities.txt'):
+            os.remove('mock_velocities.txt')
+
+
 if __name__ == "__main__":
-    main()
+    import sys
+    if 'pytest' in sys.modules:
+        test_main_function_runs()
+    else:
+        main()
+    
