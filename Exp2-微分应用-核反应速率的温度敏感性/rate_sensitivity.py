@@ -13,11 +13,10 @@ def q3a(T):
     # 2. 注意处理温度为零的特殊情况
     # 3. 使用公式：q_{3α} = 5.09×10^11 ρ^2 Y^3 T_8^(-3) exp(-44.027/T_8)
     if T == 0:
-        return "error:T=0"      #异常处理
-    else:
-        T_8 = T/(1e8)
-        q_3a = 5.09e11*(T_8**(-3))*np.exp(-44.027/T_8)
-        return q_3a
+        return 0.0      #异常处理
+    T_8 = T/(1e8)
+    q_3a = 5.09e11*(T_8**(-3))*np.exp(-44.027/T_8)
+    return q_3a
 
 def plot_rate(filename="rate_vs_temp.png"):
     """绘制速率因子随温度变化的 log-log 图"""
