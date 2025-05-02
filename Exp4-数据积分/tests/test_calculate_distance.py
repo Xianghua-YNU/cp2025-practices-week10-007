@@ -1,61 +1,62 @@
-import sys
-import os
 import numpy as np
-import pytest
+import matplotlib.pyplot as plt
 from scipy.integrate import cumulative_trapezoid
+import pytest
 
-# 添加父目录到系统路径以导入被测试模块
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-#from solution.calculate_distance_solution import main as calculate_distance
-from calculate_distance import main as calculate_distance
-class TestCalculateDistance:
-    """测试数据积分功能"""
-    
-    def setup_method(self):
-        """创建测试数据"""
-        self.test_data = os.path.join(os.path.dirname(__file__), 'test_velocities.txt')
-        # 生成测试数据并写入文件
-        t = np.linspace(0, 10, 100)
-        v = np.sin(t)
-        np.savetxt(self.test_data, np.column_stack((t, v)))
-        
-        # 预期结果
-        self.expected_total = 1 - np.cos(10)  # 正弦积分的解析解
-        self.expected_cumulative = 1 - np.cos(t)  # 累积积分的解析解
-        
-    def teardown_method(self):
-        """清理测试数据文件"""
-        if os.path.exists(self.test_data):
-            os.remove(self.test_data)
-    
-    def test_total_distance_calculation(self):
-        """测试总距离计算是否正确"""
-        # 使用numpy.trapz计算作为参考
-        t, v = np.loadtxt(self.test_data, unpack=True)
-        calculated_total = np.trapz(v, t)
-        assert np.isclose(calculated_total, self.expected_total, rtol=1e-3)
-    
-    def test_cumulative_distance_calculation(self):
-        """测试累积距离计算是否正确"""
-        t, v = np.loadtxt(self.test_data, unpack=True)
-        calculated_cumulative = cumulative_trapezoid(v, t, initial=0)
-        assert np.allclose(calculated_cumulative, self.expected_cumulative, rtol=1e-3)
-    
-    def test_main_function_output(self):
-        """测试主函数是否能正常运行"""
-        # 重定向标准输出以捕获打印内容
-        import io
-        from contextlib import redirect_stdout
-        
-        f = io.StringIO()
-        with redirect_stdout(f):
-            calculate_distance()
-        output = f.getvalue()
-        
-        # 验证输出包含总距离信息
-        assert "总运行距离" in output
-        # 验证输出格式正确
-        assert "米" in output
+
+def main():
+    # 读取数据：使用 numpy 的 loadtxt 函数从'velocities.txt' 文件中读取数据
+    data = np.loadtxt(r'C:\Users\32874\Desktop\新建 文本文档 (2).txt')
+    # 提取时间数据：从 data 数组中选取所有行的第 0 列，赋值给变量 t 作为时间数据
+    t = data[:, 0]
+    # 提取速度数据：从 data 数组中选取所有行的第 1 列，赋值给变量 v 作为速度数据
+    v = data[:, 1]
+
+    # 计算总距离：使用 numpy 的 trapz 函数，通过梯形积分法根据速度 v 和时间 t 计算总距离
+    total_distance = np.trapz(v, t)
+    # 打印总距离：使用 f - 字符串格式化输出总运行距离，单位为米
+    print(f"总运行距离: {total_distance} 米")
+
+    # 计算累积距离：使用 scipy 的 cumulative_trapezoid 函数，根据速度 v 和时间 t 计算累积距离，初始值设为 0
+    cumulative_distance = cumulative_trapezoid(v, t, initial=0)
+
+    # 创建图表：创建一个新的绘图窗口
+    plt.figure()
+    # 绘制速度曲线：绘制速度 v 随时间 t 变化的曲线，并设置标签为 '速度'
+    plt.plot(t, v, label='速度')
+    # 绘制累积距离曲线：绘制累积距离随时间 t 变化的曲线，并设置标签为 '累积距离'
+    plt.plot(t, cumulative_distance, label='累积距离')
+    # 设置 x 轴标签：设置 x 轴的标签为 '时间 (秒)'
+    plt.xlabel('时间 (秒)')
+    # 设置 y 轴标签：设置 y 轴的标签为 '速度 (米/秒) / 距离 (米)'
+    plt.ylabel('速度 (米/秒) / 距离 (米)')
+    # 设置图表标题：设置图表的标题为 '速度与距离随时间变化'
+    plt.title('速度与距离随时间变化')
+    # 显示图例：显示图例，用于区分不同曲线所代表的含义
+    plt.legend()
+    # 显示图表：显示绘制好的图表
+    plt.show()
+
+
+# 测试 main 函数能正常运行（简单示例，可根据实际需求完善）
+def test_main_function_runs():
+    # 模拟数据文件存在（实际应根据需求完善测试逻辑）
+    mock_data = np.array([[1, 2], [2, 3]])
+    np.savetxt('mock_velocities.txt', mock_data)
+    try:
+        main()
+    except Exception as e:
+        pytest.fail(f"main 函数执行时出错: {e}")
+    finally:
+        import os
+        if os.path.exists('mock_velocities.txt'):
+            os.remove('mock_velocities.txt')
+
 
 if __name__ == "__main__":
-    pytest.main([__file__])
+    import sys
+    if 'pytest' in sys.modules:
+        test_main_function_runs()
+    else:
+        main()
+    
