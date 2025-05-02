@@ -44,4 +44,4 @@ def main():
         print("请确保数据文件存在于项目目录中")
 
 if __name__ == '__main__':
-    main()
+      pytest.main([__file__])
