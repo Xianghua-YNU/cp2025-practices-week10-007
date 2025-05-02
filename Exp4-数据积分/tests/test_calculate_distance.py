@@ -7,7 +7,7 @@ def main():
     try:
         # 1. 获取数据文件路径（使用绝对路径）
         data_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        data_file = os.path.join(data_dir, 'C:\\Users\\32874\\Desktop\\Velocities.txt')
+        data_file = os.path.join(data_dir, 'C:\Users\32874\Desktop\Velocities.txt')
         
         # 2. 读取数据
         data = np.loadtxt(data_file)
